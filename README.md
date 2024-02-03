@@ -25,7 +25,7 @@ Semua code belum di deploy dan dijalankan secara local
 3. Delete Product
 4. Edit Product
 5. Table Pagination
-6. Search fitur
+6. Search feature
 
 **Fitur yang belum bekerja**
 1. Responsive Design
