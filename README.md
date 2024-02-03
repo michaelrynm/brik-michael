@@ -27,6 +27,10 @@ Semua code belum di deploy dan dijalankan secara local
 5. Table Pagination
 6. Search fitur
 
+**Fitur yang belum bekerja**
+1. Responsive Design
+2. Mengirim data gambar dari add dan edit product
+
 ThankYou BRIK
 
 
