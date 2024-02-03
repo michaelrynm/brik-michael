@@ -19,7 +19,7 @@ export default function ManageProduct() {
     }
   });
 
-  async function fetchData() {
+  async function fetchData2() {
     try {
       setIsLoading(true);
       const response = await axios.get(
@@ -33,6 +33,19 @@ export default function ManageProduct() {
     }
   }
 
+  async function fetchData() {
+    try {
+      setIsLoading(true);
+      const response = await axios.get("http://localhost:2000/products/");
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  console.log(data);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -44,27 +57,27 @@ export default function ManageProduct() {
     },
     {
       header: "Product Name",
-      accessorKey: "product_name",
+      accessorKey: "name",
     },
     {
       header: "Product Number",
-      accessorKey: "product_number",
+      accessorKey: "number",
     },
     {
       header: "Product Category",
-      accessorKey: "product_category",
+      accessorKey: "category",
     },
     {
       header: "Product Weight",
-      accessorKey: "product_weight",
+      accessorKey: "weight",
     },
     {
       header: "Product Price",
-      accessorKey: "product_price",
+      accessorKey: "price",
     },
     {
       header: "Product Description",
-      accessorKey: "product_description",
+      accessorKey: "description",
     },
     {
       header: "Action",
@@ -89,16 +102,17 @@ export default function ManageProduct() {
   async function handleDelete(row) {
     try {
       const response = await axios.delete(
-        `https://651a7c97340309952f0d5fdb.mockapi.io/api/v1/product/${row.original.id}`
+        `http://localhost:2000/products/${row.original.id}`
       );
       if (response.status === 200) {
-        alert("Data berhasil dihapus")
-        fetchData();
+        alert("Data berhasil dihapus");
       } else {
         console.log("Error Delete Data");
       }
     } catch (error) {
       console.log(Error);
+    } finally {
+      fetchData();
     }
   }
 

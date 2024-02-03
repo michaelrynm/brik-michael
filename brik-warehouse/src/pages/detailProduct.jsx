@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/navbar";
 import Layout from "../components/layout";
 import Input from "../components/input";
 import { IoIosArrowForward } from "react-icons/io";
@@ -7,22 +6,24 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 export default function DetailProduct({ product }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+
   const navigate = useNavigate();
   const { id } = useParams();
   const [formData, setFormData] = useState({
-    product_name: "",
-    product_number: "",
-    product_category: "",
-    product_weight: "",
-    product_description: "",
-    product_price: "",
+    name: "",
+    number: "",
+    category: "",
+    weight: "",
+    description: "",
+    price: "",
   });
+
 
   async function getDetail() {
     try {
-      const response = await axios.get(
-        `https://651a7c97340309952f0d5fdb.mockapi.io/api/v1/product/${id}`
-      );
+      const response = await axios.get(`http://localhost:2000/products/${id}`);
       setFormData(response.data);
     } catch (error) {
       console.log(error);
@@ -33,6 +34,15 @@ export default function DetailProduct({ product }) {
     getDetail();
   }, []);
 
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn === "true") {
+      setIsLogin(true);
+    } else {
+      navigate("/");
+    }
+  });
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -42,6 +52,7 @@ export default function DetailProduct({ product }) {
   };
 
   const handleFormSubmit = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     try {
       const response = await axios.put(
@@ -55,6 +66,7 @@ export default function DetailProduct({ product }) {
       console.log("Eror", error);
     } finally {
       navigate("/manageproduct");
+      setIsLoading(false);
     }
   };
 
@@ -96,9 +108,9 @@ export default function DetailProduct({ product }) {
                         <Input
                           label="Product Name"
                           placeholder="Product Name"
-                          name="product_name"
+                          name="name"
                           type="text"
-                          value={formData.product_name}
+                          value={formData.name}
                           onChange={handleInputChange}
                         />
                       </div>
@@ -108,9 +120,9 @@ export default function DetailProduct({ product }) {
                         <Input
                           label="Product Number"
                           placeholder="Product Number"
-                          name="product_number"
+                          name="number"
                           type="text"
-                          value={formData.product_number}
+                          value={formData.number}
                           onChange={handleInputChange}
                         />
                       </div>
@@ -119,11 +131,11 @@ export default function DetailProduct({ product }) {
                           Product Category
                         </label>
                         <select
-                          name="product_category"
+                          name="category"
                           id=""
                           className="select select-bordered w-full max-w-xs bg-white"
                           onChange={handleInputChange}
-                          value={formData.product_category}
+                          value={formData.category}
                         >
                           <option disabled>Select Option</option>
                           <option value="food">Food</option>
@@ -138,8 +150,8 @@ export default function DetailProduct({ product }) {
                           label="Product Weight"
                           placeholder="Product Weight (g)"
                           type="number"
-                          name="product_weight"
-                          value={formData.product_weight}
+                          name="weight"
+                          value={formData.weight}
                           onChange={handleInputChange}
                         />
                       </div>
@@ -148,9 +160,9 @@ export default function DetailProduct({ product }) {
                           label="Product Price"
                           placeholder="Product Price"
                           type="number"
-                          name="product_price"
+                          name="price"
                           onChange={handleInputChange}
-                          value={formData.product_price}
+                          value={formData.price}
                         />
                       </div>
                       <div>
@@ -165,8 +177,8 @@ export default function DetailProduct({ product }) {
                       <textarea
                         className="textarea bg-white shadow-xl w-full h-52"
                         placeholder="Product Description"
-                        name="product_description"
-                        value={formData.product_description}
+                        name="description"
+                        value={formData.description}
                         onChange={handleInputChange}
                       />
                     </div>
@@ -175,7 +187,11 @@ export default function DetailProduct({ product }) {
                         type="submit"
                         className="btn btn-wide bg-blue-600 text-white"
                       >
-                        Edit Product
+                        {isLoading ? (
+                          <span className="loading loading-infinity loading-xs"></span>
+                        ) : (
+                          "Edit Product"
+                        )}
                       </button>
                     </div>
                   </form>

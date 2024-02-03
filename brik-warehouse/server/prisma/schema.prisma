@@ -18,5 +18,4 @@ model Product {
   weight Int
   price Int
   description String
-  image String
 }

@@ -1,23 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Input from "../components/input";
 import Layout from "../components/layout";
-import Navbar from "../components/navbar";
 import axios from "axios";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
-  product_name: z.string().min(1, { message: "Required" }),
-  product_number: z.string().min(1, { message: "Required" }),
-  product_category: z.string().min(1, { message: "Required" }),
-  product_weight: z.number().positive().min(1),
-  product_price: z.number().positive().min(1),
-  product_description: z.string().min(1).max(200, { message: "Required" }),
+  name: z.string().min(1, { message: "Required" }),
+  number: z.string().min(1, { message: "Required" }),
+  category: z.string().min(1, { message: "Required" }),
+  weight: z.number().positive().min(1),
+  price: z.number().positive().min(1),
+  description: z.string().min(1).max(200, { message: "Required" }),
 });
 
 export default function AddProduct() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+
   const {
     register,
     reset,
@@ -26,20 +30,30 @@ export default function AddProduct() {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      product_name: "",
-      product_number: "",
-      product_category: "",
-      product_weight: "",
-      product_price: "",
-      product_description: "",
+      name: "",
+      number: "",
+      category: "",
+      weight: "",
+      price: "",
+      description: "",
     },
   });
 
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn === "true") {
+      setIsLogin(true);
+    } else {
+      navigate("/");
+    }
+  });
+
   const onSubmit = async (data) => {
+    setIsLoading(true);
     console.log(data);
     try {
       const response = await axios.post(
-        "https://651a7c97340309952f0d5fdb.mockapi.io/api/v1/product/",
+        "http://localhost:2000/products/",
         data
       );
       if (response.status === 200 || response.status === 201) {
@@ -48,7 +62,9 @@ export default function AddProduct() {
     } catch (error) {
       console.log(error);
     } finally {
+      setIsLoading(false);
       reset();
+      navigate("/manageproduct");
     }
   };
 
@@ -78,12 +94,12 @@ export default function AddProduct() {
                     label="Product Name"
                     placeholder="Product Name"
                     type="text"
-                    name="product_name"
+                    name="name"
                     register={register}
                   />
-                  {errors.product_name?.message && (
+                  {errors.name?.message && (
                     <span className="text-xs text-red-500 font-bold">
-                      {errors.product_name?.message}
+                      {errors.name?.message}
                     </span>
                   )}
                 </div>
@@ -93,12 +109,12 @@ export default function AddProduct() {
                       label="Product Number"
                       placeholder="Product Number"
                       type="text"
-                      name="product_number"
+                      name="number"
                       register={register}
                     />
-                    {errors.product_number?.message && (
+                    {errors.number?.message && (
                       <span className="text-xs text-red-500 font-bold">
-                        {errors.product_number?.message}
+                        {errors.number?.message}
                       </span>
                     )}
                   </div>
@@ -111,7 +127,7 @@ export default function AddProduct() {
                         name=""
                         id=""
                         className="select select-bordered w-full bg-white"
-                        {...register("product_category")}
+                        {...register("category")}
                       >
                         <option value="" disabled>
                           Select Option
@@ -120,9 +136,9 @@ export default function AddProduct() {
                         <option value="fashion">Fashion Item</option>
                         <option value="electronic">Electronic</option>
                       </select>
-                      {errors.product_category?.message && (
+                      {errors.category?.message && (
                         <span className="text-xs text-red-500 font-bold">
-                          {errors.product_category?.message}
+                          {errors.category?.message}
                         </span>
                       )}
                     </div>
@@ -134,12 +150,12 @@ export default function AddProduct() {
                       label="Product Weight"
                       placeholder="Product Weight (g)"
                       type="number"
-                      name="product_weight"
+                      name="weight"
                       register={register}
                     />
-                    {errors.product_weight?.message && (
+                    {errors.weight?.message && (
                       <span className="text-xs text-red-500 font-bold">
-                        {errors.product_weight?.message}
+                        {errors.weight?.message}
                       </span>
                     )}
                   </div>
@@ -148,12 +164,12 @@ export default function AddProduct() {
                       label="Product Price"
                       placeholder="Product Price"
                       type="number"
-                      name="product_price"
+                      name="price"
                       register={register}
                     />
-                    {errors.product_price?.message && (
+                    {errors.price?.message && (
                       <span className="text-xs text-red-500 font-bold">
-                        {errors.product_price?.message}
+                        {errors.price?.message}
                       </span>
                     )}
                   </div>
@@ -162,6 +178,7 @@ export default function AddProduct() {
                     <input
                       type="file"
                       className="file-input w-full border border-black bg-white shadow-xl"
+                      name="image"
                     />
                   </div>
                 </div>
@@ -169,17 +186,21 @@ export default function AddProduct() {
                   <textarea
                     className="textarea textarea-bordered border-black bg-white shadow-xl w-full h-52"
                     placeholder="Product Description"
-                    {...register("product_description")}
+                    {...register("description")}
                   />
-                  {errors.product_description?.message && (
+                  {errors.description?.message && (
                     <span className="text-xs text-red-500 font-bold">
-                      {errors.product_description?.message}
+                      {errors.description?.message}
                     </span>
                   )}
                 </div>
                 <div className="flex justify-center items-center gap-5 mt-5 mb-10">
                   <button className="btn btn-info" type="submit">
-                    Add Product
+                    {isLoading ? (
+                      <span className="loading loading-infinity loading-xs"></span>
+                    ) : (
+                      "Add Product"
+                    )}
                   </button>
                 </div>
               </form>
