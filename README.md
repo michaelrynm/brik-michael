@@ -7,7 +7,7 @@ postgresql
 
 Semua code belum di deploy dan dijalankan secara local
 
-**How to run the code**
+**How to run the code (VSCODE)**
 1. open new terminal
 2. cd .\brik-warehouse\server
 3. npm run server
