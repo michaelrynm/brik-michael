@@ -12,12 +12,13 @@ Semua code belum di deploy dan dijalankan secara local
 2. cd .\brik-warehouse\server
 3. npm run server
 4. cd .\brik-warehouse\
-5. type http://localhost:5173/ on browser
-6. Click Sign In Button **(username: user, password: user)**
-7. We can see all product data on table
-8. Click Add product to Add new product
-9. Clck edit to make changes
-10. Click Delete to Delete data
+5. npm run dev
+6. type http://localhost:5173/ on browser
+7. Click Sign In Button **(username: user, password: user)**
+8. We can see all product data on table
+9. Click Add product to Add new product
+10. Clck edit to make changes
+11. Click Delete to Delete data
 
 **Some Features in this app**
 1. Login feature
